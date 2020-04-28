@@ -19,9 +19,12 @@ export MINIKUBE_HOME=<local/path>   ex: /data/minikube
 ```
 
 ### Start minikube 
-This start minikube with kvm virtualization, 
+This start minikube with kvm virtualization,
+
 It will use up to 48Gi from the host, 
+
 It will use up to 16 cpus from the host
+
 Allocate a ~400GB disk from within the path pointed by $MINIKUBE_HOME
 
 minikube start 
