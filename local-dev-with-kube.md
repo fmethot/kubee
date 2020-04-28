@@ -1,25 +1,28 @@
-# Centos guide to have bitnami kafka helm chart running locally using minikube
+# Setup bitnami kafka charts on Centos using minikube.
 
-# Setup minikube
+## Minikube
+
+### Setup minikube
 Follow instruction to setup minikube
 https://kubernetes.io/docs/tasks/tools/install-minikube/
 
 For CentOs, this has proven use-full:
 https://www.poftut.com/use-virt-manager-libvirt-normal-user-without-root-privileges-without-asking-password/
 
-# Prepare minikube persistent volume folder
-By default, all minikube vm data goes in ~/.minikube/ folder
+### Prepare minikube persistent volume folder
+By default, all minikube vm data goes in ~/.minikube/ directory
 This include all the Dynamically created Persistence Volume created by Kafka.
 If you want minikube data to be stored at a different location, this includes disk space that will
-be dynamically provisionned for Kafka, set minikube home  to that folder:
+be dynamically provisionned for Kafka, set minikube home a different directory:
 ```
-export MINIKUBE_HOME=<local host path>   ex: /data/minikube
+export MINIKUBE_HOME=<local/path>   ex: /data/minikube
 ```
 
-# Start minikube 
+### Start minikube 
 This start minikube with kvm virtualization, 
-It will use upto 48Gi from the host, 
-Allocate a 400GB disk from within the path pointed by $MINIKUBE_HOME
+It will use up to 48Gi from the host, 
+It will use up to 16 cpus from the host
+Allocate a ~400GB disk from within the path pointed by $MINIKUBE_HOME
 
 minikube start 
   --driver=kvm2 \  
@@ -27,9 +30,9 @@ minikube start
   --disk-size=400GB \
   --cpus=16
 
-# Check the minikube instance
+### Check the minikube instance
 
-cd into into the folder show below and check the internal raw disk that was created.
+cd into the folder showed below and check the internal raw disk that was created.
 
 ```
 cd $MINIKUBE_HOME/.minikube/machines/minikube
@@ -41,8 +44,12 @@ total 52G
 -rw-------. 1 fardoche fardoche  381 Apr 27 09:56 id_rsa.pub
 -rw-r--r--. 1 qemu     qemu     382G Apr 28 16:02 minikube.rawdisk
 ```
-Check minikube allocated mem and cpus
+
+Check minikube allocated memory and cpus
+
 ```
+minikube ssh
+
 cat /proc/meminfo 
 MemTotal:       47152424 kB
 
@@ -60,15 +67,18 @@ Filesystem      Size  Used Avail Use% Mounted on
 ```
 
 
-# Export minikube IP
+### Export minikube IP
+This will be usefull for next steps where this is up is required.
 export MINIKUBE_IP=$(minikube ip)
 
-# Configure firewall 
+### Configure firewall 
 Allow minikube to connect to host (if you do extra NFS share)
 ```
 sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="'$MINIKUBE_IP'/24" accept'
 ```
-# Start Kafka Instance bundled with Zookeeper, with external port configured with NodePort
+
+## Kafka Charts
+### Start Kafka Instance bundled with Zookeeper, external port configured with NodePort
 
 ```
 helm install kafka bitnami/kafka \
@@ -82,7 +92,7 @@ helm install kafka bitnami/kafka \
   --set externalAccess.service.domain=$MINIKUBE_IP
 ```
 
-Check services running
+### Check services running
 ```
 >kubectl get all
 NAME                    READY   STATUS    RESTARTS   AGE
@@ -103,8 +113,8 @@ service/kubernetes                 ClusterIP   10.96.0.1        <none>        44
 ```
 
 
-# Test Kafka Access From Host
-Install kafka client tools on your host and try these commands
+### Test Kafka Access From Host
+Install kafka client tools on your host and try these commands, or run your own consumer/producer application.
 ```
 kafka-topics.sh --create --bootstrap-server $MINIKUBE_IP:30090 --replication-factor 1 --partitions 10 --topic test
 kafka-topics.sh --list  -bootstrap-server $MINIKUBE_IP:30090
@@ -119,6 +129,8 @@ kafka-console-consumer.sh --bootstrap-server $MINIKUBE_IP:30090 --topic test --f
 2
 ```
 
-# Mount and minikube
 
-it also mount the Host's /data/kubedata as minikube's /kubedata
+
+
+## Mounts and minikube
+
