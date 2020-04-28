@@ -11,9 +11,13 @@ https://www.poftut.com/use-virt-manager-libvirt-normal-user-without-root-privile
 
 ### Prepare minikube persistent volume folder
 By default, all minikube vm data goes in ~/.minikube/ directory
+
 This include all the Dynamically created Persistence Volume created by Kafka.
+
 If you want minikube data to be stored at a different location, this includes disk space that will
+
 be dynamically provisionned for Kafka, set minikube home a different directory:
+
 ```
 export MINIKUBE_HOME=<local/path>   ex: /data/minikube
 ```
