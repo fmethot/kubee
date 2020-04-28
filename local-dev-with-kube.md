@@ -27,11 +27,14 @@ It will use up to 16 cpus from the host
 
 Allocate a ~400GB disk from within the path pointed by $MINIKUBE_HOME
 
+```
 minikube start 
   --driver=kvm2 \  
   --memory 48Gi \
   --disk-size=400GB \
   --cpus=16
+```
+
 
 ### Check the minikube instance
 
@@ -72,10 +75,15 @@ Filesystem      Size  Used Avail Use% Mounted on
 
 ### Export minikube IP
 This will be usefull for next steps where this is up is required.
+
+```
 export MINIKUBE_IP=$(minikube ip)
+```
 
 ### Configure firewall 
+
 Allow minikube to connect to host (if you do extra NFS share)
+
 ```
 sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="'$MINIKUBE_IP'/24" accept'
 ```
