@@ -74,7 +74,7 @@ Filesystem      Size  Used Avail Use% Mounted on
 
 
 ### Export minikube IP
-This will be usefull for next steps where this is up is required.
+This will be useful for next steps...
 
 ```
 export MINIKUBE_IP=$(minikube ip)
