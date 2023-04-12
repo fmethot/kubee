@@ -1,0 +1,84 @@
+can you show me how to append Palo Alto Action log to an azure storage account using https?
+Certainly! Here's how you can append Palo Alto Action logs to an Azure Storage account using HTTPS:
+
+Create an Azure Storage account:
+Sign in to the Azure portal.
+Click on "Create a resource" button in the left-hand menu.
+Search for "Storage account" and click on it.
+Select your subscription, resource group, and give your storage account a name.
+Choose the location and performance tier that best suits your needs.
+Click "Review + create" and then "Create" to create the storage account.
+Create a storage container:
+Navigate to the newly created storage account in the Azure portal.
+Click on "Containers" in the left-hand menu and then "Add container".
+Give the container a name and set the access level to "Blob".
+Click "Create" to create the container.
+Obtain the storage account connection string:
+Navigate to the newly created storage account in the Azure portal.
+Click on "Access keys" in the left-hand menu.
+Copy the connection string from the "Connection string" field.
+Configure the Palo Alto firewall to forward logs to the Azure Storage account:
+Log in to the Palo Alto firewall web interface.
+Navigate to Device > Server Profiles > Syslog.
+Click "Add" to create a new syslog server profile.
+Give the profile a name, select "Syslog" as the protocol, and enter the Azure Storage account URL in the "Server" field. The URL should be in the format "https://<storage account name>.blob.core.windows.net".
+Set the "Port" to 443 and the "Transport" to "TCP".
+Under the "Server Certificate Validation" section, select "None".
+Click "OK" to save the syslog server profile.
+Navigate to Device > Log Settings.
+Click on the "Add" button to add a new log forwarding profile.
+Give the profile a name and select the syslog server profile you just created.
+Under the "Log Types" section, select the types of logs you want to forward to Azure Storage (e.g. Threat, Traffic, etc.).
+Under the "Filters" section, add any filters you want to apply to the logs.
+Under the "Actions" section, select "syslog" as the log forwarding method and select the syslog server profile you just created.
+Click "OK" to save the log forwarding profile.
+Configure the Azure Storage account firewall to allow traffic from the Palo Alto firewall:
+Navigate to the newly created storage account in the Azure portal.
+Click on "Firewalls and virtual networks" in the left-hand menu.
+Select "Allow access from selected networks" and then click "Add existing virtual network".
+Select the virtual network that your Palo Alto firewall is connected to and click "Save".
+Under "Firewall" settings, select "Selected networks".
+Click "Save" to save the firewall settings.
+Once you have completed these steps, the Palo Alto firewall will start forwarding the selected logs to the Azure Storage account using HTTPS. You can access the logs in the container you created in step 2.
+
+
+
+
+François Méthot
+How do we configure PaloAlto to use service principle and with credential when writing to the azure storage account?
+To configure Palo Alto to use a service principal with credentials when writing to an Azure Storage account, you will need to perform the following steps:
+
+Create an Azure Active Directory (Azure AD) application and service principal:
+Sign in to the Azure portal.
+Click on "Azure Active Directory" in the left-hand menu.
+Click on "App registrations" and then "New registration".
+Give the application a name, select "Accounts in this organizational directory only" for the "Supported account types" option, and enter the redirect URI (e.g. https://localhost).
+Click "Register" to create the application.
+Once the application is created, click on "Certificates & secrets" in the left-hand menu.
+Click "New client secret", enter a description, and select an expiration date.
+Click "Add" to create the client secret.
+Take note of the client ID, tenant ID, and client secret, as you will need these later.
+Assign the service principal appropriate permissions to the Azure Storage account:
+Navigate to the storage account in the Azure portal.
+Click on "Access control (IAM)" in the left-hand menu.
+Click "Add role assignment".
+Select the appropriate role (e.g. Storage Blob Data Contributor) and then select the service principal you created in step 1.
+Click "Save" to assign the role to the service principal.
+Configure the Palo Alto firewall to use the service principal with credentials:
+Log in to the Palo Alto firewall web interface.
+Navigate to Device > Server Profiles > Syslog.
+Click "Add" to create a new syslog server profile.
+Give the profile a name, select "Syslog" as the protocol, and enter the Azure Storage account URL in the "Server" field. The URL should be in the format "https://<storage account name>.blob.core.windows.net".
+Set the "Port" to 443 and the "Transport" to "TCP".
+Under the "Server Certificate Validation" section, select "None".
+Click the "Use Service Principal" checkbox.
+Enter the "Client ID", "Tenant ID", and "Client Secret" values you obtained in step 1.
+Click "OK" to save the syslog server profile.
+Navigate to Device > Log Settings.
+Click on the "Add" button to add a new log forwarding profile.
+Give the profile a name and select the syslog server profile you just created.
+Under the "Log Types" section, select the types of logs you want to forward to Azure Storage (e.g. Threat, Traffic, etc.).
+Under the "Filters" section, add any filters you want to apply to the logs.
+Under the "Actions" section, select "syslog" as the log forwarding method and select the syslog server profile you just created.
+Click "OK" to save the log forwarding profile.
+Once you have completed these steps, the Palo Alto firewall will use the service principal with credentials to write logs to the Azure Storage account.
