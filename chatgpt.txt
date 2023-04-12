@@ -44,7 +44,6 @@ Once you have completed these steps, the Palo Alto firewall will start forwardin
 
 
 
-François Méthot
 How do we configure PaloAlto to use service principle and with credential when writing to the azure storage account?
 To configure Palo Alto to use a service principal with credentials when writing to an Azure Storage account, you will need to perform the following steps:
 
